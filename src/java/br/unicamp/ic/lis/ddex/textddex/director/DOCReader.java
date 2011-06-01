@@ -1,5 +1,6 @@
 package java.br.unicamp.ic.lis.ddex.textddex.director;
 
+import java.br.unicamp.ic.lis.ddex.textddex.TextDocumentProperties;
 import java.br.unicamp.ic.lis.ddex.textddex.builder.ITextBuilder;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,20 +13,23 @@ import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 import org.apache.poi.hwpf.usermodel.Picture;
 
-
 public class DOCReader {
 	// Document full path
 	private String fullpath;
 	private int imageCont = 0;
 
-	// My XLS document
+	// The .DOC document from apache POI
 	private HWPFDocument doc = null;
 
 	private boolean havePicture = false;
 
 	public DOCReader(String filePath) {
+
+		this.fullpath = filePath;
+
+		// Try to open the file
 		try {
-			fullpath = filePath;
+
 			doc = new HWPFDocument(new FileInputStream(filePath));
 
 		} catch (FileNotFoundException e) {
@@ -40,15 +44,13 @@ public class DOCReader {
 
 	}
 
-
-
-
-
 	public void build(ITextBuilder theBuilder) {
-		theBuilder.foundFilePath(fullpath);
+
+		TextDocumentProperties textProperties = new TextDocumentProperties(
+				this.fullpath);
 
 		// Starting the process...
-		theBuilder.foundDocumentBegin();
+		theBuilder.foundDocumentBegin(textProperties);
 
 		/**
 		 * Very important variables! Used for all over the program
@@ -74,7 +76,7 @@ public class DOCReader {
 			}
 		}
 
-		theBuilder.foundStyleNumber(styleNumber);
+		//theBuilder.foundStyleNumber(styleNumber);
 
 		// Walking over the styles... And calling the builder!
 		for (int x = 0; x <= styleNumber; x++) {
@@ -92,8 +94,8 @@ public class DOCReader {
 			if (desc != null) {
 				chp = desc.getCHP();
 				pap = desc.getPAP();
-				CharSequenceStyle cp = null;// OWN DDex Properties
-				ParagraphStyle pp = null;// OWN DDex Properties
+		//		CharSequenceStyle cp = null;// OWN DDex Properties
+		//		ParagraphStyle pp = null;// OWN DDex Properties
 				name = desc.getName();
 				basedStyleId = desc.getBaseStyle();
 
@@ -109,18 +111,15 @@ public class DOCReader {
 					isParagraph = true;
 
 				// ParagraphStyle Found!
-				theBuilder.foundStyle(x, basedStyleId, name, isParagraph,
-						isChar);
+	//			theBuilder.foundStyle(x, basedStyleId, name, isParagraph, isChar);
 
 				// If i have the char properties:
 				if (isChar) {
-					theBuilder.foundCharStyleProperties(x, basedStyleId, name,
-							cp);
+			//		theBuilder.foundCharStyleProperties(x, basedStyleId, name, cp);
 				}
 				// If i have the paragraph properties:
 				if (isChar) {
-					theBuilder.foundParagraphStyleProperties(x, basedStyleId,
-							name, pp);
+			//		theBuilder.foundParagraphStyleProperties(x, basedStyleId,	name, pp);
 				}
 
 			}// END IF Exist the style
@@ -131,16 +130,16 @@ public class DOCReader {
 		 * PARAGRAPH BLOCK!
 		 */
 		imageNumber = doc.getPicturesTable().getAllPictures().size();
-		theBuilder.foundImageNumber(imageNumber);
+	//	theBuilder.foundImageNumber(imageNumber);
 		int numberParagraph = doc.getRange().numParagraphs();
-		theBuilder.foundParagraphNumber(numberParagraph);
+//		theBuilder.foundParagraphNumber(numberParagraph);
 		for (int i = 0; i <= numberParagraph - 1; i++) {
 			// POI
 			CharacterProperties csPOI = null;
 			ParagraphProperties ppPOI = null;
 			// DDEx
-			ParagraphStyle ps = null;
-			CharSequenceStyle css = null;
+		//	ParagraphStyle ps = null;
+		//	CharSequenceStyle css = null;
 
 			// Getting he full content
 			String paragraphContent = doc.getRange().getParagraph(i).text();
@@ -155,19 +154,19 @@ public class DOCReader {
 			ppPOI = style.getParagraphStyle(pStyleUniqueID);
 
 			// DDEx style
-			ps = new ParagraphStyle(styleName, pStyleUniqueID);
+		//	ps = new ParagraphStyle(styleName, pStyleUniqueID);
 
 			// Filling the properties of DDEx style
-			ps = this.fillParagraphStyle(ps, ppPOI);
+		//	ps = this.fillParagraphStyle(ps, ppPOI);
 
 			// Char sequence...
 			int numTextRuns = doc.getRange().getParagraph(i).numCharacterRuns();
 
 			// Ok! I've found a paragraph!
-			theBuilder.foundParagraph(i, paragraphContent, pStyleUniqueID, ps);
+	//		theBuilder.foundParagraph(i, paragraphContent, pStyleUniqueID, ps);
 
 			// Warning about the number of sequences
-			theBuilder.foundParagraphCharSequenceNumber(numTextRuns);
+	//		theBuilder.foundParagraphCharSequenceNumber(numTextRuns);
 
 			/**
 			 * CHAR SEQUENCE BLOCK!
@@ -185,9 +184,9 @@ public class DOCReader {
 
 				csPOI = style.getCharacterStyle(uniqueCharStyleID);
 
-				css = new CharSequenceStyle(charStyleName, uniqueCharStyleID);
+		//		css = new CharSequenceStyle(charStyleName, uniqueCharStyleID);
 
-				this.fillCharSequenceStyle(css, csPOI);
+		//		this.fillCharSequenceStyle(css, csPOI);
 
 				// Testing if its all about a line end
 				char firstLetter = csContent.charAt(0);
@@ -198,15 +197,14 @@ public class DOCReader {
 					if (7 == ((int) csContent.charAt(csContent.length() - 1)))
 						csContent = csContent.substring(0,
 								csContent.length() - 1);
-					theBuilder.foundCharSequence(i, iChar, csContent,
-							uniqueCharStyleID, css);
+			//		theBuilder.foundCharSequence(i, iChar, csContent,	uniqueCharStyleID, css);
 				}
 
 				/**
 				 * IMAGE BLOCK!
 				 */
-				int isPic = doc.getRange().getParagraph(i).getCharacterRun(
-						iChar).getPicOffset();
+				int isPic = doc.getRange().getParagraph(i)
+						.getCharacterRun(iChar).getPicOffset();
 
 				if (isPic > -1)
 					if (imageNumber > imageCont) {
@@ -214,8 +212,7 @@ public class DOCReader {
 						Picture p = (Picture) doc.getPicturesTable()
 								.getAllPictures().get(imageCont);
 
-						theBuilder.foundImage(isPic, p.suggestFullFileName(), p
-								.suggestFileExtension(), p.getContent());
+				//		theBuilder.foundImage(isPic, p.suggestFullFileName(),p.suggestFileExtension(), p.getContent());
 						imageCont++;
 
 					}
@@ -224,6 +221,6 @@ public class DOCReader {
 
 		}// END PARAGRAPH WALKER BLOCK
 
-		theBuilder.foundDocumentEnd();
+//		theBuilder.foundDocumentEnd();
 	}
 }
