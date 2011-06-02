@@ -21,7 +21,7 @@ public interface ITextBuilder {
 	 * 
 	 */
 
-	public void foundDocumentBegin(TextDocumentProperties properties);
+	public void foundDocumentBegin(TextDocumentProperties textFileProperties);
 
 	/**
 	 * This method is called when: Director found the beginning of a paragraph

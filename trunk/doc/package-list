@@ -1,3 +1,5 @@
 java.br.unicamp.ic.lis.ddex.textddex
 java.br.unicamp.ic.lis.ddex.textddex.builder
-java.br.unicamp.ic.lis.ddex.textddex.parts
+java.br.unicamp.ic.lis.ddex.textddex.director
+java.br.unicamp.ic.lis.ddex.textddex.part
+java.br.unicamp.ic.lis.ddex.util.image
