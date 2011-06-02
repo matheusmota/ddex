@@ -32,10 +32,6 @@ public class DOCReader {
 
 			doc = new HWPFDocument(new FileInputStream(filePath));
 
-		} catch (FileNotFoundException e) {
-			System.out.println(getClass().getName() + "Says: File not found");
-			e.printStackTrace();
-
 		} catch (IOException e) {
 			System.out.println(getClass().getName() + "Says: IOException");
 			e.printStackTrace();
