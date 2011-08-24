@@ -6,8 +6,6 @@ package itext.extraction.test1;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import br.unicamp.ic.lis.ddex.textdex.builder.ITextBuilder;
-
 import com.itextpdf.text.pdf.PdfReader;
 
 /**
