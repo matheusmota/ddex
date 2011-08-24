@@ -6,9 +6,9 @@ package textddex.test1;
 
 import br.unicamp.ic.lis.ddex.text.TextDocumentProperties;
 import br.unicamp.ic.lis.ddex.text.builder.ITextBuilder;
-import br.unicamp.ic.lis.ddex.text.part.TextObject;
-import br.unicamp.ic.lis.ddex.text.part.TextPageProperties;
-import br.unicamp.ic.lis.ddex.text.part.TextParagraph;
+import br.unicamp.ic.lis.ddex.text.part.Object;
+import br.unicamp.ic.lis.ddex.text.part.Page;
+import br.unicamp.ic.lis.ddex.text.part.Paragraph;
 
 /**
  * @author matheus
@@ -32,7 +32,7 @@ public class TestConcretBuilder implements ITextBuilder {
 	}
 
 	@Override
-	public void foundParagraphBegin(TextParagraph paragraph) {
+	public void foundParagraphBegin(Paragraph paragraph) {
 		// TODO Auto-generated method stub
 
 	}
@@ -44,7 +44,7 @@ public class TestConcretBuilder implements ITextBuilder {
 	}
 
 	@Override
-	public void foundObject(TextObject textObject) {
+	public void foundObject(Object object) {
 		System.out.println(" ***Found object***");
 
 	}
@@ -56,20 +56,20 @@ public class TestConcretBuilder implements ITextBuilder {
 	}
 
 	@Override
-	public void foundParagraphEnd(TextParagraph paragraph) {
+	public void foundParagraphEnd(Paragraph paragraph) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void foundPageEnd(TextPageProperties textPageProperties) {
+	public void foundPageEnd(Page page) {
 		System.out.println(" >Found page end.");
 
 	}
 
 	@Override
-	public void foundPageBegin(TextPageProperties textPageProperties) {
-		System.out.println(" >Found page begin. (index:" + textPageProperties.getIndex() + ")");
+	public void foundPageBegin(Page page) {
+		System.out.println(" >Found page begin. (index:" + page.getIndex() + ")");
 
 	}
 
