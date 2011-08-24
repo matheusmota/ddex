@@ -1,11 +1,5 @@
 package br.unicamp.ic.lis.ddex.spreadsheet;
 
-import br.unicamp.ic.lis.ddex.spreadsheet.part.FloatingObject;
-import br.unicamp.ic.lis.ddex.spreadsheet.part.SpreadsheetCell;
-import br.unicamp.ic.lis.ddex.spreadsheet.part.SpreadsheetColumn;
-import br.unicamp.ic.lis.ddex.spreadsheet.part.SpreadsheetLine;
-import br.unicamp.ic.lis.ddex.spreadsheet.part.SpreadsheetProperties;
-import br.unicamp.ic.lis.ddex.spreadsheet.part.SpreadsheetSheet;
 
 /**
  * @author Matheus Mota
