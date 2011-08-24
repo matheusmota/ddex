@@ -1,4 +1,4 @@
-package br.unicamp.ic.lis.ddex.textddex.director.doc;
+package br.unicamp.ic.lis.ddex.textdex.director.doc;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,8 +10,8 @@ import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 import org.apache.poi.hwpf.usermodel.Picture;
 
-import br.unicamp.ic.lis.ddex.textddex.TextDocumentProperties;
-import br.unicamp.ic.lis.ddex.textddex.builder.ITextBuilder;
+import br.unicamp.ic.lis.ddex.textdex.TextDocumentProperties;
+import br.unicamp.ic.lis.ddex.textdex.builder.ITextBuilder;
 
 public class DOCReader {
 	// Document full path
