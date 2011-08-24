@@ -1,4 +1,4 @@
-package java.br.unicamp.ic.lis.ddex.textddex;
+package br.unicamp.ic.lis.ddex.textddex;
 
 /**
  * @author matheus
@@ -8,9 +8,29 @@ public class TextDocumentProperties {
 
 	private String filePath = null;
 
-	public TextDocumentProperties(String fPath) {
-		this.filePath = fPath;
+	private String metadataSet="";
+	private String author="";
+	private String producer="";
+	private String title="";
+	private String format="";
+	private String creationDate="";
+	private String subject="";
+	private String rights="";
+	private String description="";
+	
+	private int pageNumber = -1;
 
+	private int imageNumber =-1;
+	
+	private int styleNumber=-1;
+	
+	public int getPageNumber() {
+		return pageNumber;
+	}
+
+	public TextDocumentProperties(String fPath, int pageNumber) {
+		this.filePath = fPath;
+		this.pageNumber = pageNumber;
 	}
 
 	/**
