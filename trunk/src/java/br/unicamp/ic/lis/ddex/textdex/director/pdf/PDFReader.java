@@ -1,4 +1,4 @@
-package br.unicamp.ic.lis.ddex.textddex.director.pdf;
+package br.unicamp.ic.lis.ddex.textdex.director.pdf;
 
 import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
@@ -6,10 +6,10 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import br.unicamp.ic.lis.ddex.textddex.TextDocumentProperties;
-import br.unicamp.ic.lis.ddex.textddex.builder.ITextBuilder;
-import br.unicamp.ic.lis.ddex.textddex.part.TextObject;
-import br.unicamp.ic.lis.ddex.textddex.part.TextPageProperties;
+import br.unicamp.ic.lis.ddex.textdex.TextDocumentProperties;
+import br.unicamp.ic.lis.ddex.textdex.builder.ITextBuilder;
+import br.unicamp.ic.lis.ddex.textdex.part.TextObject;
+import br.unicamp.ic.lis.ddex.textdex.part.TextPageProperties;
 
 import com.itextpdf.text.pdf.PdfException;
 import com.itextpdf.text.pdf.PdfName;
