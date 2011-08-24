@@ -1,9 +1,6 @@
-package java.br.unicamp.ic.lis.ddex.textddex.director;
+package br.unicamp.ic.lis.ddex.textddex.director.doc;
 
-import java.br.unicamp.ic.lis.ddex.textddex.TextDocumentProperties;
-import java.br.unicamp.ic.lis.ddex.textddex.builder.ITextBuilder;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.poi.hwpf.HWPFDocument;
@@ -12,6 +9,9 @@ import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 import org.apache.poi.hwpf.usermodel.Picture;
+
+import br.unicamp.ic.lis.ddex.textddex.TextDocumentProperties;
+import br.unicamp.ic.lis.ddex.textddex.builder.ITextBuilder;
 
 public class DOCReader {
 	// Document full path
@@ -42,11 +42,10 @@ public class DOCReader {
 
 	public void build(ITextBuilder theBuilder) {
 
-		TextDocumentProperties textProperties = new TextDocumentProperties(
-				this.fullpath);
+		//TextDocumentProperties textProperties = new TextDocumentProperties(this.fullpath);
 
 		// Starting the process...
-		theBuilder.foundDocumentBegin(textProperties);
+		//theBuilder.foundDocumentBegin(textProperties);
 
 		/**
 		 * Very important variables! Used for all over the program

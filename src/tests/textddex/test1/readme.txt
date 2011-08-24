@@ -1,1 +1,0 @@
-Extraction tests for PDF data extraction

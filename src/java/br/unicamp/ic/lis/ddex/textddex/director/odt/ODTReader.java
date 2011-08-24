@@ -1,7 +1,8 @@
-package java.br.unicamp.ic.lis.ddex.textddex.director;
+package br.unicamp.ic.lis.ddex.textddex.director.odt;
 
-import java.br.unicamp.ic.lis.ddex.textddex.builder.ITextBuilder;
 import java.io.IOException;
+
+import br.unicamp.ic.lis.ddex.textddex.builder.ITextBuilder;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfReader;

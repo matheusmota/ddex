@@ -1,9 +1,9 @@
-package java.br.unicamp.ic.lis.ddex.textddex.builder;
+package br.unicamp.ic.lis.ddex.textddex.builder;
 
-import java.br.unicamp.ic.lis.ddex.textddex.TextDocumentProperties;
-import java.br.unicamp.ic.lis.ddex.textddex.part.CharSequence;
-import java.br.unicamp.ic.lis.ddex.textddex.part.Paragraph;
-import java.br.unicamp.ic.lis.ddex.textddex.part.TextObject;
+import br.unicamp.ic.lis.ddex.textddex.TextDocumentProperties;
+import br.unicamp.ic.lis.ddex.textddex.part.TextParagraph;
+import br.unicamp.ic.lis.ddex.textddex.part.TextObject;
+import br.unicamp.ic.lis.ddex.textddex.part.TextPageProperties;
 
 /**
  * @author Matheus Mota
@@ -24,6 +24,17 @@ public interface ITextBuilder {
 	public void foundDocumentBegin(TextDocumentProperties textFileProperties);
 
 	/**
+	 * This method is called when: Director found the begining of the current
+	 * page.
+	 * 
+	 * @param textFileProperties
+	 *            Properties of the text file, like full path, size, number of
+	 *            letters, number of images, number of styles, mime-type etc.
+	 * 
+	 */
+	public void foundPageBegin(TextPageProperties textPageProperties);
+
+	/**
 	 * This method is called when: Director found the beginning of a paragraph
 	 * 
 	 * @param paragraph
@@ -31,7 +42,7 @@ public interface ITextBuilder {
 	 *            some properties, such as style orientation etc.
 	 */
 
-	public void foundParagraphBegin(Paragraph paragraph);
+	public void foundParagraphBegin(TextParagraph paragraph);
 
 	/**
 	 * This method is called when: Director found a char sequence into a
@@ -76,8 +87,17 @@ public interface ITextBuilder {
 	 *            some properties, such as style orientation etc.
 	 */
 
+	public void foundParagraphEnd(TextParagraph paragraph);
 
-	public void foundParagraphEnd(Paragraph paragraph);
+	/**
+	 * This method is called when: Director found the end of the current page.
+	 * 
+	 * @param textFileProperties
+	 *            Properties of the text file, like full path, size, number of
+	 *            letters, number of images, number of styles, mime-type etc.
+	 * 
+	 */
+	public void foundPageEnd(TextPageProperties textPageProperties);
 
 	/**
 	 * This method is called when: Director found the end of a text document.
@@ -87,6 +107,6 @@ public interface ITextBuilder {
 	 *            letters, number of images, number of styles, mime-type etc.
 	 * 
 	 */
-	public void foundTextDocumentEnd(TextDocumentProperties textFileProperties);
+	public void foundDocumentEnd(TextDocumentProperties textFileProperties);
 
 }
