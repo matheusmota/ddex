@@ -1,11 +1,11 @@
 package br.unicamp.ic.lis.ddex.spreadsheet;
 
-import br.unicamp.ic.lis.ddex.spreadsheet.part.FloatingObject;
-import br.unicamp.ic.lis.ddex.spreadsheet.part.SpreadsheetCell;
-import br.unicamp.ic.lis.ddex.spreadsheet.part.SpreadsheetColumn;
-import br.unicamp.ic.lis.ddex.spreadsheet.part.SpreadsheetLine;
-import br.unicamp.ic.lis.ddex.spreadsheet.part.SpreadsheetProperties;
-import br.unicamp.ic.lis.ddex.spreadsheet.part.SpreadsheetSheet;
+import br.unicamp.ic.lis.ddex.spreadsheetdex.part.FloatingObject;
+import br.unicamp.ic.lis.ddex.spreadsheetdex.part.SpreadsheetCell;
+import br.unicamp.ic.lis.ddex.spreadsheetdex.part.SpreadsheetColumn;
+import br.unicamp.ic.lis.ddex.spreadsheetdex.part.SpreadsheetLine;
+import br.unicamp.ic.lis.ddex.spreadsheetdex.part.SpreadsheetProperties;
+import br.unicamp.ic.lis.ddex.spreadsheetdex.part.SpreadsheetSheet;
 
 /**
  * @author Matheus Mota
