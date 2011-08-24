@@ -4,11 +4,11 @@ package textddex.test1;
  * 
  */
 
-import br.unicamp.ic.lis.ddex.textddex.TextDocumentProperties;
-import br.unicamp.ic.lis.ddex.textddex.builder.ITextBuilder;
-import br.unicamp.ic.lis.ddex.textddex.part.TextObject;
-import br.unicamp.ic.lis.ddex.textddex.part.TextPageProperties;
-import br.unicamp.ic.lis.ddex.textddex.part.TextParagraph;
+import br.unicamp.ic.lis.ddex.textdex.TextDocumentProperties;
+import br.unicamp.ic.lis.ddex.textdex.builder.ITextBuilder;
+import br.unicamp.ic.lis.ddex.textdex.part.TextObject;
+import br.unicamp.ic.lis.ddex.textdex.part.TextPageProperties;
+import br.unicamp.ic.lis.ddex.textdex.part.TextParagraph;
 
 /**
  * @author matheus
