@@ -1,7 +1,7 @@
 package textddex.test1;
 
 
-import br.unicamp.ic.lis.ddex.textdex.director.pdf.PDFReader;
+import br.unicamp.ic.lis.ddex.text.director.pdf.PDFReader;
 
 public class Test1Main {
 
