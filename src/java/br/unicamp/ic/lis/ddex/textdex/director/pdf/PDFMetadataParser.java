@@ -1,7 +1,7 @@
 /**
  * 
  */
-package br.unicamp.ic.lis.ddex.textddex.director.pdf;
+package br.unicamp.ic.lis.ddex.textdex.director.pdf;
 
 import java.io.IOException;
 
