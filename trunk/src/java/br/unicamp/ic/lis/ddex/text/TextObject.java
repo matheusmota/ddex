@@ -1,7 +1,7 @@
 /**
  * 
  */
-package java.br.unicamp.ic.lis.ddex.text.builder;
+package java.br.unicamp.ic.lis.ddex.text;
 
 /**
  * @author matheus

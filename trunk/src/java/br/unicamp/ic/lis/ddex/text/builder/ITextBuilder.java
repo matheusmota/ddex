@@ -1,6 +1,10 @@
 package java.br.unicamp.ic.lis.ddex.text.builder;
 
 import java.br.unicamp.ic.lis.ddex.text.DocumentProperties;
+import java.br.unicamp.ic.lis.ddex.text.Page;
+import java.br.unicamp.ic.lis.ddex.text.Paragraph;
+import java.br.unicamp.ic.lis.ddex.text.TextBlock;
+import java.br.unicamp.ic.lis.ddex.text.TextObject;
 
 public interface ITextBuilder {
 
