@@ -1,7 +1,5 @@
 package java.br.unicamp.ic.lis.ddex.text.director.doc;
 
-
-
 import java.br.unicamp.ic.lis.ddex.text.builder.ITextBuilder;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -147,7 +145,8 @@ public class DOCReader {
 			int pStyleUniqueID = doc.getRange().getParagraph(i).getStyleIndex();
 
 			// Getting name
-			String styleName = style.getStyleDescription(pStyleUniqueID).getName();
+			String styleName = style.getStyleDescription(pStyleUniqueID)
+					.getName();
 			// Getting the POIstyle
 			ppPOI = style.getParagraphStyle(pStyleUniqueID);
 
@@ -172,11 +171,14 @@ public class DOCReader {
 			 */
 			for (int iChar = 0; iChar < numTextRuns; iChar++) {
 
-				String csContent = doc.getRange().getParagraph(i).getCharacterRun(iChar).text();
+				String csContent = doc.getRange().getParagraph(i)
+						.getCharacterRun(iChar).text();
 
 				// unique id and name for style
-				int uniqueCharStyleID = doc.getRange().getParagraph(i).getCharacterRun(iChar).cloneProperties().getIstd();
-				String charStyleName = style.getStyleDescription(uniqueCharStyleID).getName();
+				int uniqueCharStyleID = doc.getRange().getParagraph(i)
+						.getCharacterRun(iChar).cloneProperties().getIstd();
+				String charStyleName = style.getStyleDescription(
+						uniqueCharStyleID).getName();
 
 				csPOI = style.getCharacterStyle(uniqueCharStyleID);
 
@@ -188,9 +190,12 @@ public class DOCReader {
 				// Testing if its all about a line end
 				char firstLetter = csContent.charAt(0);
 				int firstletterNumber = (int) firstLetter;
-				if ((firstletterNumber != 11) && ((firstletterNumber != 13)) && ((firstletterNumber != 7)) && ((firstletterNumber != 32))) {
+				if ((firstletterNumber != 11) && ((firstletterNumber != 13))
+						&& ((firstletterNumber != 7))
+						&& ((firstletterNumber != 32))) {
 					if (7 == ((int) csContent.charAt(csContent.length() - 1)))
-						csContent = csContent.substring(0, csContent.length() - 1);
+						csContent = csContent.substring(0,
+								csContent.length() - 1);
 					// theBuilder.foundCharSequence(i, iChar, csContent,
 					// uniqueCharStyleID, css);
 				}
@@ -198,12 +203,14 @@ public class DOCReader {
 				/**
 				 * IMAGE BLOCK!
 				 */
-				int isPic = doc.getRange().getParagraph(i).getCharacterRun(iChar).getPicOffset();
+				int isPic = doc.getRange().getParagraph(i)
+						.getCharacterRun(iChar).getPicOffset();
 
 				if (isPic > -1)
 					if (imageNumber > imageCont) {
 
-						Picture p = (Picture) doc.getPicturesTable().getAllPictures().get(imageCont);
+						Picture p = (Picture) doc.getPicturesTable()
+								.getAllPictures().get(imageCont);
 
 						// theBuilder.foundImage(isPic,
 						// p.suggestFullFileName(),p.suggestFileExtension(),
