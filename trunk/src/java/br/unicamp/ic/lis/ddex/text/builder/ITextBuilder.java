@@ -1,17 +1,19 @@
 package java.br.unicamp.ic.lis.ddex.text.builder;
 
-import java.br.unicamp.ic.lis.ddex.text.DocumentProperties;
-import java.br.unicamp.ic.lis.ddex.text.Page;
-import java.br.unicamp.ic.lis.ddex.text.Paragraph;
+import java.br.unicamp.ic.lis.ddex.text.TextDocumentProperties;
 import java.br.unicamp.ic.lis.ddex.text.TextBlock;
 import java.br.unicamp.ic.lis.ddex.text.TextObject;
 
 public interface ITextBuilder {
 
+	public enum TextBlockTypes {
+		PARAGRAPH, PAGE, SECTION, CHAPTER, FOOTNOTE, HEADER
+	};
+
 	/**
 	 * This method is called when: Director found the begin of a text document.
 	 * 
-	 * @param DocumentProperties
+	 * @param TextDocumentProperties
 	 *            Properties of the file, like full path, size, number of
 	 *            letters, number of images, number of styles, metadata etc. <br>
 	 * 
@@ -19,19 +21,10 @@ public interface ITextBuilder {
 	 *            (see the DDEx tutorial{@link http://ddex.sourceforge.com})
 	 */
 
-	public void foundDocumentBegin(DocumentProperties textFileProperties);
+	public void foundDocumentBegin(TextDocumentProperties textFileProperties);
 
 	/**
 	 * This method is called when: Director found a page
-	 * 
-	 * @param
-	 */
-
-	public void foundPageBegin(Page page);
-
-	/**
-	 * This method is called when: Director found a text block, such as section,
-	 * subsections, chapters or other block limits
 	 * 
 	 * @param
 	 */
@@ -40,15 +33,6 @@ public interface ITextBuilder {
 
 	/**
 	 * This method is called when: Director found a paragraph
-	 * 
-	 * @param
-	 */
-
-	public void foundParagraphBegin(Paragraph paragraph);
-
-	/**
-	 * This method is called when: Director found a char sequence into a
-	 * paragraph
 	 * 
 	 * @param
 	 */
@@ -74,15 +58,7 @@ public interface ITextBuilder {
 	public void foundCharSequenceEnd(CharSequence charSequence);
 
 	/**
-	 * This method is called when: Director found the end of a paragraph
-	 * 
-	 * @param
-	 */
-
-	public void foundParagraphEnd(Paragraph paragraph);
-
-	/**
-	 * This method is called when: Director found the end of a paragraph
+	 * This method is called when: Director found the end of a block
 	 * 
 	 * @param
 	 */
@@ -90,16 +66,8 @@ public interface ITextBuilder {
 	public void foundBlockEnd(TextBlock block);
 
 	/**
-	 * This method is called when: Director found the end of a paragraph
-	 * 
-	 * @param
-	 */
-
-	public void foundPageEnd(Page page);
-
-	/**
 	 * This method is called when: Director found the end of a text document
 	 */
-	public void foundTextDocumentEnd(DocumentProperties textFileProperties);
+	public void foundTextDocumentEnd(TextDocumentProperties textFileProperties);
 
 }
