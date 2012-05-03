@@ -18,7 +18,7 @@ public interface ITextBuilder {
 	 *            letters, number of images, number of styles, metadata etc. <br>
 	 * 
 	 *            This method is the first to be called in to extraction process
-	 *            (see the DDEx tutorial{@link http://ddex.sourceforge.com})
+	 *            (see the DDEx tutorial{@link http://code.google.com/p/ddex/})
 	 */
 
 	public void foundDocumentBegin(TextDocumentProperties textFileProperties);
