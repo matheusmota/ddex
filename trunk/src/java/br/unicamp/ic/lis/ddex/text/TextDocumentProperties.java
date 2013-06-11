@@ -10,11 +10,11 @@ package java.br.unicamp.ic.lis.ddex.text;
 public class TextDocumentProperties {
 	
 	
-	public boolean pagesIndication = false;
-	public String fullpath;
-	public int filesize;
-	public long numberOfWords;
-	public long numberOfImages;
+	private boolean pagesIndication = false;
+	private String fullpath;
+	private int filesize;
+	private long numberOfWords;
+	private long numberOfImages;
 	
 	
 	
