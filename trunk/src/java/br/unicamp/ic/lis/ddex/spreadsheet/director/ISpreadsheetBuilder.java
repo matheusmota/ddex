@@ -90,22 +90,6 @@ public interface ISpreadsheetBuilder {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * This method is called when: Director found sheet in a document (a
 	 * spreadsheet document may have many sheets inside)
