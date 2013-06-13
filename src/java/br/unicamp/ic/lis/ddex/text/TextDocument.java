@@ -7,7 +7,7 @@ package java.br.unicamp.ic.lis.ddex.text;
  * @author matheus
  *
  */
-public class TextDocumentProperties {
+public class TextDocument {
 	
 	
 	private boolean pagesIndication = false;

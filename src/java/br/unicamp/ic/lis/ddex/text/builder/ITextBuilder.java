@@ -1,6 +1,6 @@
 package java.br.unicamp.ic.lis.ddex.text.builder;
 
-import java.br.unicamp.ic.lis.ddex.text.TextDocumentProperties;
+import java.br.unicamp.ic.lis.ddex.text.TextDocument;
 import java.br.unicamp.ic.lis.ddex.text.TextBlock;
 import java.br.unicamp.ic.lis.ddex.text.TextObject;
 
@@ -13,7 +13,7 @@ public interface ITextBuilder {
 	/**
 	 * This method is called when: Director found the begin of a text document.
 	 * 
-	 * @param TextDocumentProperties
+	 * @param TextDocument
 	 *            Properties of the file, like full path, size, number of
 	 *            letters, number of images, number of styles, metadata etc. <br>
 	 * 
@@ -21,7 +21,7 @@ public interface ITextBuilder {
 	 *            (see the DDEx tutorial{@link http://code.google.com/p/ddex/})
 	 */
 
-	public void foundDocumentBegin(TextDocumentProperties textFileProperties);
+	public void foundDocumentBegin(TextDocument textFileProperties);
 
 	/**
 	 * This method is called when: Director found a page
@@ -68,6 +68,6 @@ public interface ITextBuilder {
 	/**
 	 * This method is called when: Director found the end of a text document
 	 */
-	public void foundTextDocumentEnd(TextDocumentProperties textFileProperties);
+	public void foundTextDocumentEnd(TextDocument textFileProperties);
 
 }
