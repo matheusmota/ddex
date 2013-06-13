@@ -1,18 +1,17 @@
 package java.br.unicamp.ic.lis.ddex.spreadsheet.director.xls;
 
 import java.br.unicamp.ic.lis.ddex.spreadsheet.CellTypes;
+import java.br.unicamp.ic.lis.ddex.spreadsheet.Image;
 import java.br.unicamp.ic.lis.ddex.spreadsheet.SpreadsheetProperties;
 import java.br.unicamp.ic.lis.ddex.spreadsheet.director.ISpreadsheetBuilder;
 import java.br.unicamp.ic.lis.ddex.util.image.ByteArrayToFileImage;
-import java.br.unicamp.ic.lis.ddex.util.image.ImageProperties;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.hslf.usermodel.PictureData;
+import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -512,7 +511,7 @@ public class XLSReader {
 		/********************** Objects Extraction block - Images **********************/
 
 		// My list of images (As Byte Array)
-		List<?> imgList;
+		List imgList;
 
 		// Copying the original list of images from workbook
 		imgList = wb.getAllPictures();
@@ -528,42 +527,30 @@ public class XLSReader {
 		 ********** Image Table (Walking...)***********
 		 **********************************************/
 
-		   List lst = wb.getAllPictures();
-		    for (Iterator it = lst.iterator(); it.hasNext(); ) {
-		        PictureData pict = (PictureData)it.next();
-		       // String ext = pict.suggestFileExtension();
-		        byte[] data = pict.getData();
-		        if (ext.equals("jpeg")){
-		          FileOutputStream out = new FileOutputStream("pict.jpg");
-		          out.write(data);
-		          out.close();
-		        }
-		    }
-		      
-		
-		
-		for (int i = 0; i < numberofImages; i++) {
+		int imageCount = 0;
+		List<HSSFPictureData> lst = wb.getAllPictures();
+		for (Iterator<HSSFPictureData> it = lst.iterator(); it.hasNext();) {
+			imageCount++;
 
 			// Getting the image as Data (ByteArray)
-			HSSFPictureData theImage = (HSSFPictureData) imgList.get(i);
+			HSSFPictureData pict = it.next();
 
 			// Creating the object from HWPF(Word)to simplify the transformation
-			byte[] data = theImage.getData();
-
-			// Creating the object from HWPF(Word)to acess informations
-			Picture image ;
+			byte[] data = pict.getData();
 
 			// Image name (Suggested)
-			String sugestedImageName = i + image.suggestFullFileName();
+			String sugestedImageName = "" + imageCount;
 
 			// Image extension (Suggested)
-			String sugestedImageExtension = image.suggestFileExtension();
+			String sugestedImageExtension = pict.suggestFileExtension();
 
 			// Make a new object for properties
-			ImageProperties properties = new ImageProperties(image);
-
-			builder.foundImage(i, sugestedImageName, sugestedImageExtension,
-					data, properties);
+			Image image = new Image();
+			image.setName(sugestedImageName);
+			image.setExtension(sugestedImageExtension);
+			
+			//warning the builder about the image
+			builder.foundObject(image);
 
 		}
 
