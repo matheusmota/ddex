@@ -2,6 +2,9 @@ package java.br.unicamp.ic.lis.ddex.spreadsheet.director.xls;
 
 import java.br.unicamp.ic.lis.ddex.spreadsheet.CellTypes;
 import java.br.unicamp.ic.lis.ddex.spreadsheet.Image;
+import java.br.unicamp.ic.lis.ddex.spreadsheet.ReadingStrategies;
+import java.br.unicamp.ic.lis.ddex.spreadsheet.Row;
+import java.br.unicamp.ic.lis.ddex.spreadsheet.Sheet;
 import java.br.unicamp.ic.lis.ddex.spreadsheet.SpreadsheetProperties;
 import java.br.unicamp.ic.lis.ddex.spreadsheet.director.ISpreadsheetBuilder;
 import java.br.unicamp.ic.lis.ddex.util.image.ByteArrayToFileImage;
@@ -11,7 +14,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -21,7 +23,6 @@ import org.apache.poi.hssf.usermodel.HSSFPictureData;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -48,7 +49,7 @@ public class XLSReader {
 	private int maxCells, contCells;
 
 	// Last/count lines
-	private int maxLines, contLines;
+	private int maxLines, rowIndex;
 
 	public XLSReader(String filePath) {
 		try {
@@ -487,7 +488,7 @@ public class XLSReader {
 
 	}
 
-	public void build(ISpreadsheetBuilder builder) {
+	public void build(ISpreadsheetBuilder builder, ReadingStrategies order) {
 
 		// instantiating a new document properties
 		this.document = new SpreadsheetProperties(this.fullpath);
@@ -502,8 +503,8 @@ public class XLSReader {
 
 		// Walking on sheets
 		// Objects that will iterate overrows and cells
-		HSSFSheet sheet;
-		HSSFRow row;
+		HSSFSheet sheetPOI;
+		HSSFRow rowPOI;
 		HSSFCell cell;
 		Iterator<?> rowsIterator = null;
 		Iterator<?> cellsIterator = null;
@@ -548,53 +549,62 @@ public class XLSReader {
 			Image image = new Image();
 			image.setName(sugestedImageName);
 			image.setExtension(sugestedImageExtension);
-			
-			//warning the builder about the image
+
+			// warning the builder about the image
 			builder.foundObject(image);
 
 		}
 
-		for (int page = 0; page < numberOfSheets; page++) {
-			sheet = wb.getSheetAt(page);
-			contLines = 0;
+		for (int sheetIndex = 0; sheetIndex < numberOfSheets; sheetIndex++) {
+			sheetPOI = wb.getSheetAt(sheetIndex);
+			rowIndex = 0;
 			// now i'm starting call the builder
-			String pageName = wb.getSheetName(page);
+			String sheetName = wb.getSheetName(sheetIndex);
 
-			builder.foundPage(page, pageName, sheet.getProtect(),
-					sheet.getPhysicalNumberOfRows(), sheet.getLastRowNum(),
-					this.getLastColumnNumber(page));
+			//Setting up the new sheet that will be delivered to the builder
+			Sheet sheet = new Sheet(sheetIndex);
+			sheet.setLabel(sheetName);
+			sheet.setProtected(sheetPOI.getProtect());
+			sheet.setNumberOfRows(sheetPOI.getPhysicalNumberOfRows());
+			sheet.setLastRowNumber(sheetPOI.getLastRowNum());
+			sheet.setLastColumnNumber(this.getLastColumnNumber(sheetIndex));
+					
+			//delivering to the builder
+			builder.foundSheet(sheet);
+					
 
-			// Let's walk on the page!!! using the iterator.
-			rowsIterator = sheet.rowIterator();
-			boolean haveLine;
+			// Let's walk on the page! Row by row and then cell by cell
+			rowsIterator = sheetPOI.rowIterator();
+			boolean existRow;
 			// start walk on the lines!
-			contLines = 0;
+			rowIndex = 0;
 
-			haveLine = rowsIterator.hasNext();
-			while (haveLine) {
+			existRow = rowsIterator.hasNext();
+			while (existRow) {
 
-				row = (HSSFRow) rowsIterator.next();
+				rowPOI = (HSSFRow) rowsIterator.next();
 
-				if (contLines < row.getRowNum())// i have blank lines!
+				if (rowIndex < rowPOI.getRowNum())// i have blank lines!
 				{
 
-					while (contLines < row.getRowNum()) {
-						builder.foundBlankLine(page, contLines);
+					while (rowIndex < rowPOI.getRowNum()) {
+						
+						Row row = new Row(rowIndex);
+						row.setEmpty(true);
+						builder.foundRow(row);
 
-						builder.foundLineEnd(page, contLines);
-						contLines++;
 					}
 
 				}
-				// not blank line
-				builder.foundLine(page, row.getRowNum(),
-						row.getPhysicalNumberOfCells());
-				maxCells = row.getLastCellNum();
+				// not empty row PAREI AQUI 13junho13
+				builder.foundRow(sheetIndex, rowPOI.getRowNum(),
+						rowPOI.getPhysicalNumberOfCells());
+				maxCells = rowPOI.getLastCellNum();
 
-				contLines++;
+				rowIndex++;
 
 				// let\B4s walk on the cells!
-				cellsIterator = row.cellIterator();
+				cellsIterator = rowPOI.cellIterator();
 				boolean haveCells = cellsIterator.hasNext();
 				contCells = 0;
 				// start walk on the cells!
@@ -605,12 +615,14 @@ public class XLSReader {
 
 					// if i have not used cells...
 					while (contCells < cell.getCellNum()) {
-						builder.foundCell(page, contLines - 1, contCells,
+						builder.foundCell(sheetIndex, rowIndex - 1, contCells,
 								CellTypes.NOTUSED);
 
-						builder.foundNotUsedCell(page, contLines - 1, contCells);
+						builder.foundNotUsedCell(sheetIndex, rowIndex - 1,
+								contCells);
 
-						builder.foundCellEnd(page, contLines - 1, contCells);
+						builder.foundCellEnd(sheetIndex, rowIndex - 1,
+								contCells);
 
 						contCells++;
 					}
@@ -620,7 +632,7 @@ public class XLSReader {
 					// The cell exist.. but the text is blank
 					if (cell.getCellType() == HSSFCell.CELL_TYPE_BLANK) {
 
-						builder.foundCell(page, row.getRowNum(),
+						builder.foundCell(sheetIndex, rowPOI.getRowNum(),
 								cell.getCellNum(), whatTypeThatCellIs(cell));
 
 						// get the cell style
@@ -728,21 +740,21 @@ public class XLSReader {
 							break;
 						}
 
-						builder.foundCellDesignProperties(page,
-								row.getRowNum(), cell.getCellNum(),
+						builder.foundCellDesignProperties(sheetIndex,
+								rowPOI.getRowNum(), cell.getCellNum(),
 								rightBColor, leftBColor, upBColor, downBColor,
 								leftB, rightB, upB, downB, leftBType,
 								rightBType, upBType, downBType, alignType,
 								backgroundColor);
 
-						builder.foundBlankContentInCell(page, row.getRowNum(),
-								cell.getCellNum());
+						builder.foundBlankContentInCell(sheetIndex,
+								rowPOI.getRowNum(), cell.getCellNum());
 
 						// end of BLANK CELL
 
 					} else {// not a BLANK content cell....
 
-						builder.foundCell(page, row.getRowNum(),
+						builder.foundCell(sheetIndex, rowPOI.getRowNum(),
 								cell.getCellNum(), whatTypeThatCellIs(cell));
 
 						// get the cell style
@@ -879,8 +891,8 @@ public class XLSReader {
 
 							// ***STARTING TEXT PROPERTIS****
 
-							builder.foundCellDesignProperties(page,
-									row.getRowNum(), cell.getCellNum(),
+							builder.foundCellDesignProperties(sheetIndex,
+									rowPOI.getRowNum(), cell.getCellNum(),
 									rightBColor, leftBColor, upBColor,
 									downBColor, leftB, rightB, upB, downB,
 									leftBType, rightBType, upBType, downBType,
@@ -888,8 +900,8 @@ public class XLSReader {
 
 							int fontSize = fontAux.getFontHeight() / 10;
 							String fontName = fontAux.getFontName();
-							builder.foundCellTextProperties(page,
-									row.getRowNum(), cell.getCellNum(),
+							builder.foundCellTextProperties(sheetIndex,
+									rowPOI.getRowNum(), cell.getCellNum(),
 									fontSize, fontName, textColor, bold,
 									italic, underline);
 
@@ -899,44 +911,44 @@ public class XLSReader {
 						switch (typeAux) {
 
 						case CellTypes.BOOLEAN:
-							builder.foundCellContentAsBoolean(page,
-									row.getRowNum(), cell.getCellNum(),
+							builder.foundCellContentAsBoolean(sheetIndex,
+									rowPOI.getRowNum(), cell.getCellNum(),
 									cell.getBooleanCellValue());
 							break;
 
 						case CellTypes.DOUBLE:
-							builder.foundCellContentAsDouble(page,
-									row.getRowNum(), cell.getCellNum(),
+							builder.foundCellContentAsDouble(sheetIndex,
+									rowPOI.getRowNum(), cell.getCellNum(),
 									cell.getNumericCellValue());
 
 							break;
 
 						case CellTypes.FORMULA:
-							builder.foundCellContentAsFormula(page,
-									row.getRowNum(), cell.getCellNum(),
+							builder.foundCellContentAsFormula(sheetIndex,
+									rowPOI.getRowNum(), cell.getCellNum(),
 									cell.getCellFormula());
 							break;
 
 						case CellTypes.STRING:
-							builder.foundCellContentAsString(page, row
+							builder.foundCellContentAsString(sheetIndex, rowPOI
 									.getRowNum(), cell.getCellNum(), cell
 									.getRichStringCellValue().getString());
 
 							break;
 
 						case CellTypes.UNKNOWN:
-							builder.foundUnknownCellContent(page,
-									row.getRowNum(), cell.getCellNum());
+							builder.foundUnknownCellContent(sheetIndex,
+									rowPOI.getRowNum(), cell.getCellNum());
 							break;
 
 						default:
-							builder.foundUnknownCellContent(page,
-									row.getRowNum(), cell.getCellNum());
+							builder.foundUnknownCellContent(sheetIndex,
+									rowPOI.getRowNum(), cell.getCellNum());
 							break;
 						}
 
 					}
-					builder.foundCellEnd(page, row.getRowNum(),
+					builder.foundCellEnd(sheetIndex, rowPOI.getRowNum(),
 							cell.getCellNum());
 					contCells++;
 
@@ -947,13 +959,13 @@ public class XLSReader {
 				}// Ending the travel around the cells
 
 				// **ALWAYS ON THE END**
-				builder.foundLineEnd(page, row.getRowNum());
-				haveLine = rowsIterator.hasNext();
+				builder.foundLineEnd(sheetIndex, rowPOI.getRowNum());
+				existRow = rowsIterator.hasNext();
 				// **DO NOT CHAGE THIS! NEVER!
 
 			}// Ending the travel around the lines
 
-			builder.foundPageEnd(page, pageName);
+			builder.foundPageEnd(sheetIndex, sheetName);
 		}// Ending the for of pages
 		builder.foundEndOfSS();
 		try {
