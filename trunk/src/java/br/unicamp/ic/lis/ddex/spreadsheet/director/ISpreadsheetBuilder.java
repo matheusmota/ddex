@@ -1,12 +1,11 @@
 package java.br.unicamp.ic.lis.ddex.spreadsheet.director;
 
-import java.br.unicamp.ic.lis.ddex.spreadsheet.Column;
-import java.br.unicamp.ic.lis.ddex.spreadsheet.Line;
 import java.br.unicamp.ic.lis.ddex.spreadsheet.Cell;
-import java.br.unicamp.ic.lis.ddex.spreadsheet.SpreadsheetProperties;
+import java.br.unicamp.ic.lis.ddex.spreadsheet.Column;
+import java.br.unicamp.ic.lis.ddex.spreadsheet.Row;
+import java.br.unicamp.ic.lis.ddex.spreadsheet.Sheet;
 import java.br.unicamp.ic.lis.ddex.spreadsheet.SpreadsheetObject;
-import java.br.unicamp.ic.lis.ddex.text.TextBlock;
-import java.br.unicamp.ic.lis.ddex.text.TextObject;
+import java.br.unicamp.ic.lis.ddex.spreadsheet.SpreadsheetProperties;
 
 public interface ISpreadsheetBuilder {
 
@@ -35,7 +34,7 @@ public interface ISpreadsheetBuilder {
 	 * @param
 	 */
 
-	public void foundSheet(TextBlock block);
+	public void foundSheet(Sheet block);
 
 	/**
 	 * This method is called when: Director found a line (if the extractor is
@@ -44,7 +43,7 @@ public interface ISpreadsheetBuilder {
 	 * @param
 	 */
 
-	public void foundLine(Line sheetLine);
+	public void foundRow(Row sheetLine);
 
 	/**
 	 * This method is called when: Director found a column (if the extractor is
@@ -73,23 +72,6 @@ public interface ISpreadsheetBuilder {
 
 	public void foundObject(SpreadsheetObject object);
 
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * This method is called when: Director found sheet in a document (a
 	 * spreadsheet document may have many sheets inside)
@@ -97,10 +79,6 @@ public interface ISpreadsheetBuilder {
 	 * @param
 	 */
 
-	
 	public void foundDocumentEnd(SpreadsheetProperties spreadsheetDocument);
 
-
-	
-	
 }
