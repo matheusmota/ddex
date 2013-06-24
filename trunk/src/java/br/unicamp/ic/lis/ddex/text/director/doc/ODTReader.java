@@ -1,6 +1,6 @@
-package java.br.unicamp.ic.lis.ddex.text.director.doc;
+package br.unicamp.ic.lis.ddex.text.director.doc;
 
-import java.br.unicamp.ic.lis.ddex.text.builder.ITextBuilder;
+import br.unicamp.ic.lis.ddex.text.builder.ITextBuilder;
 
 public class ODTReader {
 

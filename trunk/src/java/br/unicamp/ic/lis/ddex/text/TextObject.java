@@ -1,9 +1,9 @@
 /**
  * 
  */
-package java.br.unicamp.ic.lis.ddex.text;
+package br.unicamp.ic.lis.ddex.text;
 
-import java.br.unicamp.ic.lis.ddex.common.DocumentObject;
+import br.unicamp.ic.lis.ddex.common.DocumentObject;
 
 /**
  * @author matheus

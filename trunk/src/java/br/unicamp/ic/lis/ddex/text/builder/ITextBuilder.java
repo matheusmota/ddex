@@ -1,8 +1,8 @@
-package java.br.unicamp.ic.lis.ddex.text.builder;
+package br.unicamp.ic.lis.ddex.text.builder;
 
-import java.br.unicamp.ic.lis.ddex.text.TextDocument;
-import java.br.unicamp.ic.lis.ddex.text.TextBlock;
-import java.br.unicamp.ic.lis.ddex.text.TextObject;
+import br.unicamp.ic.lis.ddex.text.TextDocument;
+import br.unicamp.ic.lis.ddex.text.TextBlock;
+import br.unicamp.ic.lis.ddex.text.TextObject;
 
 public interface ITextBuilder {
 

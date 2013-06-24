@@ -1,13 +1,15 @@
-package java.br.unicamp.ic.lis.ddex.spreadsheet.director.xls;
+package br.unicamp.ic.lis.ddex.spreadsheet.director.xls;
 
-import java.br.unicamp.ic.lis.ddex.spreadsheet.CellTypes;
-import java.br.unicamp.ic.lis.ddex.spreadsheet.Image;
-import java.br.unicamp.ic.lis.ddex.spreadsheet.ReadingStrategies;
-import java.br.unicamp.ic.lis.ddex.spreadsheet.Row;
-import java.br.unicamp.ic.lis.ddex.spreadsheet.Sheet;
-import java.br.unicamp.ic.lis.ddex.spreadsheet.SpreadsheetProperties;
-import java.br.unicamp.ic.lis.ddex.spreadsheet.director.ISpreadsheetBuilder;
-import java.br.unicamp.ic.lis.ddex.util.image.ByteArrayToFileImage;
+import br.unicamp.ic.lis.ddex.spreadsheet.Cell;
+import br.unicamp.ic.lis.ddex.spreadsheet.CellAlignTypes;
+import br.unicamp.ic.lis.ddex.spreadsheet.CellTypes;
+import br.unicamp.ic.lis.ddex.spreadsheet.Image;
+import br.unicamp.ic.lis.ddex.spreadsheet.ReadingStrategies;
+import br.unicamp.ic.lis.ddex.spreadsheet.Row;
+import br.unicamp.ic.lis.ddex.spreadsheet.Sheet;
+import br.unicamp.ic.lis.ddex.spreadsheet.SpreadsheetProperties;
+import br.unicamp.ic.lis.ddex.spreadsheet.director.ISpreadsheetBuilder;
+import br.unicamp.ic.lis.ddex.util.image.ByteArrayToFileImage;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -17,7 +19,6 @@ import java.util.List;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFPictureData;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -49,7 +50,7 @@ public class XLSReader {
 	private int maxCells, contCells;
 
 	// Last/count lines
-	private int maxLines, rowIndex;
+	private int maxLines;
 
 	public XLSReader(String filePath) {
 		try {
@@ -74,10 +75,9 @@ public class XLSReader {
 		return wb.getNumberOfSheets();
 	}
 
-	private CellTypes whatTypeThatCellIs(Object thecell) {
-		HSSFCell cell = (HSSFCell) thecell;
+	private CellTypes whatTypeThatCellIs(HSSFCell theCell) {
 
-		switch (((HSSFCell) cell).getCellType()) {
+		switch (theCell.getCellType()) {
 		case HSSFCell.CELL_TYPE_NUMERIC:
 			return CellTypes.DOUBLE;
 
@@ -92,10 +92,8 @@ public class XLSReader {
 
 		case HSSFCell.CELL_TYPE_FORMULA:
 			return CellTypes.FORMULA;
-
-		default:
-			return CellTypes.UNKNOWN;
 		}
+		return CellTypes.UNKNOWN;
 	}
 
 	private Boolean existCell(int pageRequested, int lineRequested,
@@ -488,7 +486,8 @@ public class XLSReader {
 
 	}
 
-	public void build(ISpreadsheetBuilder builder, ReadingStrategies order) {
+	public void build(ISpreadsheetBuilder builder, ReadingStrategies order)
+			throws IOException {
 
 		// instantiating a new document properties
 		this.document = new SpreadsheetProperties(this.fullpath);
@@ -505,7 +504,7 @@ public class XLSReader {
 		// Objects that will iterate overrows and cells
 		HSSFSheet sheetPOI;
 		HSSFRow rowPOI;
-		HSSFCell cell;
+		HSSFCell cellPOI;
 		Iterator<?> rowsIterator = null;
 		Iterator<?> cellsIterator = null;
 
@@ -520,6 +519,8 @@ public class XLSReader {
 		// setting number of images
 		int numberofImages = imgList.size();
 		this.document.setNumberOfImages(numberofImages);
+
+		builder.foundDocumentBegin(this.document);
 
 		// My convesor from ByteArray To FileImage type
 		ByteArrayToFileImage out = new ByteArrayToFileImage();
@@ -555,210 +556,131 @@ public class XLSReader {
 
 		}
 
-		for (int sheetIndex = 0; sheetIndex < numberOfSheets; sheetIndex++) {
+		int sheetIndex, rowIndex, cellIndex;
+		for (sheetIndex = 0; sheetIndex < numberOfSheets; sheetIndex++) {
 			sheetPOI = wb.getSheetAt(sheetIndex);
 			rowIndex = 0;
 			// now i'm starting call the builder
 			String sheetName = wb.getSheetName(sheetIndex);
 
-			//Setting up the new sheet that will be delivered to the builder
+			// Setting up the new sheet that will be delivered to the builder
 			Sheet sheet = new Sheet(sheetIndex);
 			sheet.setLabel(sheetName);
 			sheet.setProtected(sheetPOI.getProtect());
 			sheet.setNumberOfRows(sheetPOI.getPhysicalNumberOfRows());
 			sheet.setLastRowNumber(sheetPOI.getLastRowNum());
 			sheet.setLastColumnNumber(this.getLastColumnNumber(sheetIndex));
-					
-			//delivering to the builder
-			builder.foundSheet(sheet);
-					
 
-			// Let's walk on the page! Row by row and then cell by cell
+			// delivering to the builder
+			builder.foundSheet(sheet);
+
+			/**
+			 * PAGE Walker starts here. Let's walk on the page! Row by row and
+			 * then cell by cell
+			 */
+
+			// start walk on the rows
 			rowsIterator = sheetPOI.rowIterator();
 			boolean existRow;
-			// start walk on the lines!
 			rowIndex = 0;
-
 			existRow = rowsIterator.hasNext();
+			Row row;
+			Cell cell;
+
 			while (existRow) {
 
 				rowPOI = (HSSFRow) rowsIterator.next();
 
-				if (rowIndex < rowPOI.getRowNum())// i have blank lines!
-				{
+				// i have blank lines!
+				if (rowIndex < rowPOI.getRowNum()) {
 
 					while (rowIndex < rowPOI.getRowNum()) {
-						
-						Row row = new Row(rowIndex);
+						row = new Row(sheetIndex, rowIndex);
 						row.setEmpty(true);
 						builder.foundRow(row);
-
+						rowIndex++;
 					}
 
 				}
-				// not empty row PAREI AQUI 13junho13
-				builder.foundRow(sheetIndex, rowPOI.getRowNum(),
-						rowPOI.getPhysicalNumberOfCells());
+				// not empty row P
+				row = new Row(sheetIndex, rowPOI.getRowNum());
+				long numberOfCells = rowPOI.getPhysicalNumberOfCells();
 				maxCells = rowPOI.getLastCellNum();
+				row.setNumberOfCells(numberOfCells);
+				row.setLastCellIndex(maxCells);
+
+				// warning builder about the
+				builder.foundRow(row);
 
 				rowIndex++;
 
-				// let\B4s walk on the cells!
+				// let's walk on the cells!
 				cellsIterator = rowPOI.cellIterator();
 				boolean haveCells = cellsIterator.hasNext();
 				contCells = 0;
 				// start walk on the cells!
-
+				cellIndex = 0;
 				while (haveCells) {
 
-					cell = (HSSFCell) cellsIterator.next();
+					cellPOI = (HSSFCell) cellsIterator.next();
 
 					// if i have not used cells...
-					while (contCells < cell.getCellNum()) {
-						builder.foundCell(sheetIndex, rowIndex - 1, contCells,
-								CellTypes.NOTUSED);
-
-						builder.foundNotUsedCell(sheetIndex, rowIndex - 1,
-								contCells);
-
-						builder.foundCellEnd(sheetIndex, rowIndex - 1,
-								contCells);
-
-						contCells++;
+					while (contCells < cellPOI.getCellNum()) {
+						cell = new Cell(sheetIndex, rowIndex, cellIndex,
+								cellIndex, CellTypes.NOTUSED);
+						builder.foundCell(cell);
+						cellIndex++;
 					}
 
 					// ****************END NOT UNUSED CELL!!*******************
 
 					// The cell exist.. but the text is blank
-					if (cell.getCellType() == HSSFCell.CELL_TYPE_BLANK) {
-
-						builder.foundCell(sheetIndex, rowPOI.getRowNum(),
-								cell.getCellNum(), whatTypeThatCellIs(cell));
+					if (cellPOI.getCellType() == HSSFCell.CELL_TYPE_BLANK) {
+						cell = new Cell(sheetIndex, rowIndex, cellIndex,
+								cellIndex, whatTypeThatCellIs(cellPOI));
+						cell.setCellType(CellTypes.BLANK);
 
 						// get the cell style
-						HSSFCellStyle styleAux = cell.getCellStyle();
+						HSSFCellStyle styleAux = cellPOI.getCellStyle();
 
-						// vars to the style
-						boolean leftB = false, rightB = false, upB = false, downB = false;
-						int leftBType = 0, rightBType = 0, upBType = 0, downBType = 0;
-
-						String backgroundColor = "FFFFFF";
-						short backgroundNum;
-						String upBColor = "FFFFFF", downBColor = "FFFFFF", leftBColor = "FFFFFF", rightBColor = "FFFFFF";
-
-						if (styleAux.getBorderLeft() != HSSFCellStyle.BORDER_NONE) {
-							leftB = true;
-							leftBType = CellBorderTypes.BORDER_TYPE_SOLID;
-						}
-
-						if (styleAux.getBorderRight() != HSSFCellStyle.BORDER_NONE) {
-							rightB = true;
-							rightBType = CellBorderTypes.BORDER_TYPE_SOLID;
-
-						}
-
-						if (styleAux.getBorderTop() != HSSFCellStyle.BORDER_NONE) {
-							upB = true;
-							upBType = CellBorderTypes.BORDER_TYPE_SOLID;
-
-						}
-
-						if (styleAux.getBorderBottom() != HSSFCellStyle.BORDER_NONE) {
-							downB = true;
-							downBType = CellBorderTypes.BORDER_TYPE_SOLID;
-
-						}
-
-						// taking the color pallete
-						HSSFPalette palleteAux = wb.getCustomPalette();
-
-						// background number
-						backgroundNum = styleAux.getFillForegroundColor();
-
-						// background RGB and convert
-
-						if (backgroundNum != 64) {
-							backgroundColor = palleteAux
-									.getColor(backgroundNum).getHexString();
-							backgroundColor = this
-									.convertToRGB(backgroundColor);
-						}
-
-						// borders colors
-						short borderColorNumAux = 0;
-
-						if (rightB) {
-							borderColorNumAux = styleAux.getRightBorderColor();
-							rightBColor = palleteAux
-									.getColor(borderColorNumAux).getHexString();
-							rightBColor = this.convertToRGB(rightBColor);
-
-						}
-
-						if (leftB) {
-							borderColorNumAux = styleAux.getLeftBorderColor();
-							leftBColor = palleteAux.getColor(borderColorNumAux)
-									.getHexString();
-							leftBColor = this.convertToRGB(leftBColor);
-						}
-
-						if (upB) {
-							borderColorNumAux = styleAux.getTopBorderColor();
-							upBColor = palleteAux.getColor(borderColorNumAux)
-									.getHexString();
-							upBColor = this.convertToRGB(upBColor);
-						}
-
-						if (downB) {
-							borderColorNumAux = styleAux.getBottomBorderColor();
-							downBColor = palleteAux.getColor(borderColorNumAux)
-									.getHexString();
-							downBColor = this.convertToRGB(downBColor);
-						}
-
-						int align = cell.getCellStyle().getAlignment();
-						int alignType;
+						int align = cellPOI.getCellStyle().getAlignment();
+						CellAlignTypes alignType;
 						switch (align) {
 						case HSSFCellStyle.ALIGN_CENTER:
-							alignType = CellAlignTypes.ALIGN_TYPE_CENTER;
+							alignType = CellAlignTypes.CENTER;
 							break;
 
 						case HSSFCellStyle.ALIGN_JUSTIFY:
-							alignType = CellAlignTypes.ALIGN_TYPE_JUSTIFY;
+							alignType = CellAlignTypes.JUSTIFY;
 							break;
 
 						case HSSFCellStyle.ALIGN_LEFT:
-							alignType = CellAlignTypes.ALIGN_TYPE_LEFT;
+							alignType = CellAlignTypes.LEFT;
 							break;
 
 						case HSSFCellStyle.ALIGN_RIGHT:
-							alignType = CellAlignTypes.ALIGN_TYPE_RIGHT;
+							alignType = CellAlignTypes.RIGHT;
 							break;
 
 						default:
-							alignType = CellAlignTypes.ALIGN_TYPE_LEFT;
+							alignType = CellAlignTypes.LEFT;
 							break;
 						}
 
-						builder.foundCellDesignProperties(sheetIndex,
-								rowPOI.getRowNum(), cell.getCellNum(),
-								rightBColor, leftBColor, upBColor, downBColor,
-								leftB, rightB, upB, downB, leftBType,
-								rightBType, upBType, downBType, alignType,
-								backgroundColor);
+						cell.setCellAlignType(alignType);
 
-						builder.foundBlankContentInCell(sheetIndex,
-								rowPOI.getRowNum(), cell.getCellNum());
+						//
+						builder.foundCell(cell);
 
 						// end of BLANK CELL
 
 					} else {// not a BLANK content cell....
 
-						builder.foundCell(sheetIndex, rowPOI.getRowNum(),
-								cell.getCellNum(), whatTypeThatCellIs(cell));
+						cell = new Cell(sheetIndex, rowIndex, cellIndex,
+								cellIndex, whatTypeThatCellIs(cellPOI));
 
 						// get the cell style
-						HSSFCellStyle styleAux = cell.getCellStyle();
+						HSSFCellStyle styleAux = cellPOI.getCellStyle();
 
 						if (styleAux != null) {
 							// vars to the style
@@ -769,28 +691,32 @@ public class XLSReader {
 							short colorNum, backgroundNum;
 							String upBColor = "FFFFFF", downBColor = "FFFFFF", leftBColor = "FFFFFF", rightBColor = "FFFFFF";
 
-							if (styleAux.getBorderLeft() != HSSFCellStyle.BORDER_NONE) {
-								leftB = true;
-								leftBType = CellBorderTypes.BORDER_TYPE_SOLID;
-							}
-
-							if (styleAux.getBorderRight() != HSSFCellStyle.BORDER_NONE) {
-								rightB = true;
-								rightBType = CellBorderTypes.BORDER_TYPE_SOLID;
-
-							}
-
-							if (styleAux.getBorderTop() != HSSFCellStyle.BORDER_NONE) {
-								upB = true;
-								upBType = CellBorderTypes.BORDER_TYPE_SOLID;
-
-							}
-
-							if (styleAux.getBorderBottom() != HSSFCellStyle.BORDER_NONE) {
-								downB = true;
-								downBType = CellBorderTypes.BORDER_TYPE_SOLID;
-
-							}
+							// if (styleAux.getBorderLeft() !=
+							// HSSFCellStyle.BORDER_NONE) {
+							// leftB = true;
+							// leftBType = CellBorderTypes.BORDER_TYPE_SOLID;
+							// }
+							//
+							// if (styleAux.getBorderRight() !=
+							// HSSFCellStyle.BORDER_NONE) {
+							// rightB = true;
+							// rightBType = CellBorderTypes.BORDER_TYPE_SOLID;
+							//
+							// }
+							//
+							// if (styleAux.getBorderTop() !=
+							// HSSFCellStyle.BORDER_NONE) {
+							// upB = true;
+							// upBType = CellBorderTypes.BORDER_TYPE_SOLID;
+							//
+							// }
+							//
+							// if (styleAux.getBorderBottom() !=
+							// HSSFCellStyle.BORDER_NONE) {
+							// downB = true;
+							// downBType = CellBorderTypes.BORDER_TYPE_SOLID;
+							//
+							// }
 
 							// get the font!!
 							HSSFFont fontAux = styleAux.getFont(wb);
@@ -801,157 +727,122 @@ public class XLSReader {
 							// taking tha color pallet
 							HSSFPalette palletAux = wb.getCustomPalette();
 
-							// text color!
-							if (palletAux.getColor(colorNum) != null) {
-								textColor = palletAux.getColor(colorNum)
-										.getHexString();
-								// converting...
-								textColor = this.convertToRGB(textColor);
-							}
-							// background number
-							backgroundNum = styleAux.getFillForegroundColor();
-							// background RGB and convert
-							if (backgroundNum != 64) {
-								backgroundColor = palletAux.getColor(
-										backgroundNum).getHexString();
-
-								backgroundColor = this
-										.convertToRGB(backgroundColor);
-							}
-							// borders colors
-							short borderColorNumAux = 0;
-
-							if (rightB) {
-								borderColorNumAux = styleAux
-										.getRightBorderColor();
-								rightBColor = palletAux.getColor(
-										borderColorNumAux).getHexString();
-								rightBColor = this.convertToRGB(rightBColor);
-							}
-
-							if (leftB) {
-								borderColorNumAux = styleAux
-										.getLeftBorderColor();
-								leftBColor = palletAux.getColor(
-										borderColorNumAux).getHexString();
-								leftBColor = this.convertToRGB(leftBColor);
-							}
-
-							if (upB) {
-								borderColorNumAux = styleAux
-										.getTopBorderColor();
-								upBColor = palletAux
-										.getColor(borderColorNumAux)
-										.getHexString();
-								upBColor = this.convertToRGB(upBColor);
-							}
-
-							if (downB) {
-								borderColorNumAux = styleAux
-										.getBottomBorderColor();
-								downBColor = palletAux.getColor(
-										borderColorNumAux).getHexString();
-								downBColor = this.convertToRGB(downBColor);
-							}
+							// // text color!
+							// if (palletAux.getColor(colorNum) != null) {
+							// textColor = palletAux.getColor(colorNum)
+							// .getHexString();
+							// // converting...
+							// textColor = this.convertToRGB(textColor);
+							// }
+							// // background number
+							// backgroundNum =
+							// styleAux.getFillForegroundColor();
+							// // background RGB and convert
+							// if (backgroundNum != 64) {
+							// backgroundColor = palletAux.getColor(
+							// backgroundNum).getHexString();
+							//
+							// backgroundColor = this
+							// .convertToRGB(backgroundColor);
+							// }
+							// // borders colors
+							// short borderColorNumAux = 0;
+							//
+							// if (rightB) {
+							// borderColorNumAux = styleAux
+							// .getRightBorderColor();
+							// rightBColor = palletAux.getColor(
+							// borderColorNumAux).getHexString();
+							// rightBColor = this.convertToRGB(rightBColor);
+							// }
+							//
+							// if (leftB) {
+							// borderColorNumAux = styleAux
+							// .getLeftBorderColor();
+							// leftBColor = palletAux.getColor(
+							// borderColorNumAux).getHexString();
+							// leftBColor = this.convertToRGB(leftBColor);
+							// }
+							//
+							// if (upB) {
+							// borderColorNumAux = styleAux
+							// .getTopBorderColor();
+							// upBColor = palletAux
+							// .getColor(borderColorNumAux)
+							// .getHexString();
+							// upBColor = this.convertToRGB(upBColor);
+							// }
+							//
+							// if (downB) {
+							// borderColorNumAux = styleAux
+							// .getBottomBorderColor();
+							// downBColor = palletAux.getColor(
+							// borderColorNumAux).getHexString();
+							// downBColor = this.convertToRGB(downBColor);
+							// }
 
 							boolean bold = false;
-							if ((cell.getCellStyle().getFont(wb)
-									.getBoldweight() == HSSFFont.BOLDWEIGHT_BOLD))
+							if ((cellPOI.getCellStyle().getFont(wb)
+									.getBoldweight() == HSSFFont.BOLDWEIGHT_BOLD)) {
 								bold = true;
+							}
 
 							boolean underline = false;
-							if (cell.getCellStyle().getFont(wb).getUnderline() > 0)
+							if (cellPOI.getCellStyle().getFont(wb)
+									.getUnderline() > 0) {
 								underline = true;
+							}
 
 							boolean italic = fontAux.getItalic();
 
-							int align = cell.getCellStyle().getAlignment();
-							int alignType;
+							int align = cellPOI.getCellStyle().getAlignment();
+							CellAlignTypes alignType;
 							switch (align) {
 							case HSSFCellStyle.ALIGN_CENTER:
-								alignType = CellAlignTypes.ALIGN_TYPE_CENTER;
+								alignType = CellAlignTypes.CENTER;
 								break;
 
 							case HSSFCellStyle.ALIGN_JUSTIFY:
-								alignType = CellAlignTypes.ALIGN_TYPE_JUSTIFY;
+								alignType = CellAlignTypes.JUSTIFY;
 								break;
 
 							case HSSFCellStyle.ALIGN_LEFT:
-								alignType = CellAlignTypes.ALIGN_TYPE_LEFT;
+								alignType = CellAlignTypes.LEFT;
 								break;
 
 							case HSSFCellStyle.ALIGN_RIGHT:
-								alignType = CellAlignTypes.ALIGN_TYPE_RIGHT;
+								alignType = CellAlignTypes.RIGHT;
 								break;
 
 							default:
-								alignType = CellAlignTypes.ALIGN_TYPE_LEFT;
+								alignType = CellAlignTypes.LEFT;
 								break;
 							}
 
-							// ***STARTING TEXT PROPERTIS****
-
-							builder.foundCellDesignProperties(sheetIndex,
-									rowPOI.getRowNum(), cell.getCellNum(),
-									rightBColor, leftBColor, upBColor,
-									downBColor, leftB, rightB, upB, downB,
-									leftBType, rightBType, upBType, downBType,
-									alignType, backgroundColor);
-
 							int fontSize = fontAux.getFontHeight() / 10;
 							String fontName = fontAux.getFontName();
-							builder.foundCellTextProperties(sheetIndex,
-									rowPOI.getRowNum(), cell.getCellNum(),
-									fontSize, fontName, textColor, bold,
-									italic, underline);
 
-						}
+							// ***Setting cell info****
+							cell.setCellAlignType(alignType);
+							cell.setBackgroundColor(backgroundColor);
+							cell.setFontSize(fontSize);
+							cell.setFontName(fontName);
+							cell.setTextColor(textColor);
+							cell.setBold(bold);
+							cell.setItalic(italic);
+							cell.setUnderline(underline);
 
-						int typeAux = whatTypeThatCellIs(cell);
-						switch (typeAux) {
+						}// end style handling
 
-						case CellTypes.BOOLEAN:
-							builder.foundCellContentAsBoolean(sheetIndex,
-									rowPOI.getRowNum(), cell.getCellNum(),
-									cell.getBooleanCellValue());
-							break;
+						CellTypes typeAux = whatTypeThatCellIs(cellPOI);
+						cell.setCelltype(typeAux);
 
-						case CellTypes.DOUBLE:
-							builder.foundCellContentAsDouble(sheetIndex,
-									rowPOI.getRowNum(), cell.getCellNum(),
-									cell.getNumericCellValue());
-
-							break;
-
-						case CellTypes.FORMULA:
-							builder.foundCellContentAsFormula(sheetIndex,
-									rowPOI.getRowNum(), cell.getCellNum(),
-									cell.getCellFormula());
-							break;
-
-						case CellTypes.STRING:
-							builder.foundCellContentAsString(sheetIndex, rowPOI
-									.getRowNum(), cell.getCellNum(), cell
-									.getRichStringCellValue().getString());
-
-							break;
-
-						case CellTypes.UNKNOWN:
-							builder.foundUnknownCellContent(sheetIndex,
-									rowPOI.getRowNum(), cell.getCellNum());
-							break;
-
-						default:
-							builder.foundUnknownCellContent(sheetIndex,
-									rowPOI.getRowNum(), cell.getCellNum());
-							break;
-						}
+						builder.foundCell(cell);
 
 					}
-					builder.foundCellEnd(sheetIndex, rowPOI.getRowNum(),
-							cell.getCellNum());
-					contCells++;
 
+					contCells++;
+					// builder.foundcellend(cell);
 					// **ALWAYS HERE**
 					haveCells = cellsIterator.hasNext();
 					// **DO NOT CHAGE THIS! NEVER!
@@ -959,146 +850,17 @@ public class XLSReader {
 				}// Ending the travel around the cells
 
 				// **ALWAYS ON THE END**
-				builder.foundLineEnd(sheetIndex, rowPOI.getRowNum());
+				// builder.foundLineEnd(sheetIndex, rowPOI.getRowNum());
 				existRow = rowsIterator.hasNext();
-				// **DO NOT CHAGE THIS! NEVER!
+				// **DO NOT CHANGE THIS! NEVER!
 
-			}// Ending the travel around the lines
+			}// Ending the travel around the rows
 
-			builder.foundPageEnd(sheetIndex, sheetName);
+			// builder.foundPageEnd(sheetIndex, sheetName);
 		}// Ending the for of pages
-		builder.foundEndOfSS();
-		try {
-			theFile.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		builder.foundDocumentEnd(this.document);
 
-	}
-
-	public void old() {
-
-		// Start walking on the Labeled cells
-		for (int y = 0; y < labeledCellsNumber; y++) {
-
-			// Calling the IPresentationBuilder and warning about a new Labeled
-			// Cell
-			// builder.foundLabeledCell(label, pageNumber, lineNumber,
-			// cellNumber, cellType, isDeleted)
-
-			// The HSSF cell on the position Y in the array
-			HSSFName LCell = wb.getNameAt(y);
-
-			// Getting the Cell label...
-			String label = LCell.getNameName();
-
-			// Getting the Cell status...
-			boolean isDeleted = LCell.isDeleted();
-
-			// Getting the Cell page name...
-			String cellPageName = LCell.getSheetName();
-
-			// Getting the Cell page index
-			int cellPageIndex = wb.getSheetIndex(cellPageName);
-
-			// Getting the Cell Reference...
-			String reference = LCell.getReference();
-
-			/*****************************************************
-			 * If the cell wasn't deleted, lets get the metadata!*
-			 *****************************************************/
-
-			if (!isDeleted) {
-
-				/**
-				 * Now we go to explore the REFERENCE and get the informations
-				 **/
-
-				// My reference explorer
-				ExploreCellReference explorer = new ExploreCellReference(
-						reference);
-
-				// **Getting the cell reference informations...**
-
-				// Line number
-				int lineNumber = explorer.getLineNumber();
-
-				// Cell number (column)
-				int cellNumber = explorer.getCellNumber();
-
-				/**
-				 * 
-				 * OK!! Thats all i need to get the primary information! Go find
-				 * the CELL!
-				 * 
-				 * **/
-
-				// Calling the IPresentationBuilder and warning about the
-				// Labeled cell
-				builder.foundLabeledCell(label, cellPageIndex, cellPageName,
-						lineNumber, cellNumber);
-
-				/**
-				 * Restoring the data! Start the metadata
-				 * **/
-
-				// Now, go find the cell! If existe!
-				boolean existThisCell = this.existCell(cellPageIndex,
-						lineNumber, cellNumber);
-
-				if (existThisCell) {
-					HSSFCell theHSSFCell = this.getHSSFCell(cellPageIndex,
-							lineNumber, cellNumber);
-
-					switch (theHSSFCell.getCellType()) {
-
-					case HSSFCell.CELL_TYPE_FORMULA: {
-						String formula = theHSSFCell.getCellFormula();
-						builder.foundLabeledCellAsFormula(cellPageIndex,
-								lineNumber, cellNumber, formula);
-
-						break;
-					}
-
-					case HSSFCell.CELL_TYPE_NUMERIC: {
-						double content = theHSSFCell.getNumericCellValue();
-						builder.foundLabeledCellAsDouble(cellPageIndex,
-								lineNumber, cellNumber, content);
-
-						break;
-					}
-
-					case HSSFCell.CELL_TYPE_STRING: {
-						String content = theHSSFCell.getRichStringCellValue()
-								.getString();
-						builder.foundLabeledCellAsString(cellPageIndex,
-								lineNumber, cellNumber, content);
-
-						break;
-					}
-
-					default:
-						builder.foundUnknowLabeledCell(cellPageIndex,
-								lineNumber, cellNumber);
-
-						break;
-					}
-				} else {// NOT EXIST... IS blank
-					builder.foundNotUsedCell(cellPageIndex, lineNumber,
-							cellNumber);
-				}
-
-				// Warning about the end of a labeled cell!
-				builder.foundLabeledCellEnd(cellPageIndex, lineNumber,
-						cellNumber);
-
-			}// END if isDeleted
-			else {
-				builder.foundDeletedLabel(label);
-			}
-			builder.foundLastLabeledCellEnd();
-		}// End of the "FOR" Listing Lcells
+		theFile.close();
 
 	}
 

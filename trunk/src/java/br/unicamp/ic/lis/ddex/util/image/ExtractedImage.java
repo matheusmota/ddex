@@ -1,4 +1,4 @@
-package java.br.unicamp.ic.lis.ddex.util.image;
+package br.unicamp.ic.lis.ddex.util.image;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

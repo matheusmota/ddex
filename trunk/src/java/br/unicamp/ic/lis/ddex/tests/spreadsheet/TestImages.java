@@ -1,4 +1,4 @@
-package java.br.unicamp.ic.lis.ddex.tests.spreadsheet;
+package br.unicamp.ic.lis.ddex.tests.spreadsheettests;
 
 public class TestImages {
 

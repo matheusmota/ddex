@@ -1,11 +1,10 @@
-package java.br.unicamp.ic.lis.ddex.spreadsheet;
+package br.unicamp.ic.lis.ddex.spreadsheet;
 
 /**
- * @author Matheus Motta e Talita Rocha
- * @version 1.1.5
+ * @author Matheus Mota
  */
 public enum CellTypes {
 
-	STRING, DOUBLE, BLANK, BOOLEAN, FORMULA, NOTUSED, UNKNOWN
+	STRING, DOUBLE, BLANK, BOOLEAN, FORMULA, DELETED, NOTUSED, UNKNOWN
 
 }
