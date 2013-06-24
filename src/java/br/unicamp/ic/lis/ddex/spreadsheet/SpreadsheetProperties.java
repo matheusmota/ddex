@@ -1,4 +1,4 @@
-package java.br.unicamp.ic.lis.ddex.spreadsheet;
+package br.unicamp.ic.lis.ddex.spreadsheet;
 
 public class SpreadsheetProperties {
 

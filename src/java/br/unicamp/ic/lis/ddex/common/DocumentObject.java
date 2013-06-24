@@ -1,4 +1,4 @@
-package java.br.unicamp.ic.lis.ddex.common;
+package br.unicamp.ic.lis.ddex.common;
 
 public class DocumentObject {
 
