@@ -21,6 +21,8 @@ public class Cell {
 	private String textColor;
 	private String backgroundColor;
 	private String content;
+	private String comment;
+	private String commentAuthor;
 
 
 	public Cell(long sheetIndex, long rowIndex, long columnIndex, long index,
@@ -30,6 +32,26 @@ public class Cell {
 		this.columnIndex = columnIndex;
 		this.index = index;
 		this.cellType = cellType;
+	}
+
+	public String getCommentAuthor() {
+		return commentAuthor;
+	}
+
+	public void setCommentAuthor(String commentAuthor) {
+		this.commentAuthor = commentAuthor;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+	public CellTypes getCellType() {
+		return cellType;
 	}
 
 	public String getContent() {
@@ -158,9 +180,6 @@ public class Cell {
 		return columnIndex;
 	}
 
-	public CellTypes getCelltype() {
-		return cellType;
-	}
 
 	public void setCelltype(CellTypes cellType) {
 		this.cellType = cellType;

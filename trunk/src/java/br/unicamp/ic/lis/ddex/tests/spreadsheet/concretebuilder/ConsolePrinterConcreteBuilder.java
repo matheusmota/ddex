@@ -38,9 +38,9 @@ public class ConsolePrinterConcreteBuilder implements ISpreadsheetBuilder {
 	public void foundCell(Cell cell) {
 		System.out.println("          Found Cell - S" + cell.getSheetIndex()
 				+ " R" + cell.getRowIndex() + " C" + cell.getIndex()+ " ("
-				+ cell.getCelltype() + ")");
+				+ cell.getCellType() + ")");
 		if (cell.getContent() != null)
-			System.out.println("                                    Content: " + cell.getContent());
+			System.out.println("                                    Content: " + cell.getContent()+" - Comment: "+cell.getComment());
 
 	}
 
