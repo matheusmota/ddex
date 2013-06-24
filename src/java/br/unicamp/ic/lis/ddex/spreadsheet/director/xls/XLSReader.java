@@ -15,6 +15,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Comment;
 
 import br.unicamp.ic.lis.ddex.spreadsheet.Cell;
 import br.unicamp.ic.lis.ddex.spreadsheet.CellAlignTypes;
@@ -30,7 +31,6 @@ import br.unicamp.ic.lis.ddex.util.image.ByteArrayToFileImage;
 
 /**
  * @author Matheus Mota
- * @version 1.1.5
  */
 public class XLSReader {
 
@@ -614,8 +614,6 @@ public class XLSReader {
 				// warning builder about the
 				builder.foundRow(row);
 
-				
-
 				// let's walk on the cells!
 				cellsIterator = rowPOI.cellIterator();
 				boolean haveCells = cellsIterator.hasNext();
@@ -864,6 +862,14 @@ public class XLSReader {
 
 						}
 
+						Comment comment = cellPOI.getCellComment();
+
+						if (comment != null){
+							cell.setComment(comment.getString().getString());
+							cell.setCommentAuthor(comment.getAuthor());
+							System.out.println("achei comment");
+						}
+						
 						builder.foundCell(cell);
 
 					}
