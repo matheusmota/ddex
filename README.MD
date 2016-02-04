@@ -1,4 +1,8 @@
-DEx - Extracting data independently of file formats
+DDEx - Document Data Extractor
+==============
+
+Extracting data independently of file formats
+---------
 
 Welcome to the DDEx's project page. Here you'll find more information about the API.
 What is DDEx?
