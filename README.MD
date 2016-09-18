@@ -1,4 +1,4 @@
-# DDEx Project - Document Data Extractor
+# DDEx Project
 
 ## Extracting data independently of file formats
 
