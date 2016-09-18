@@ -28,6 +28,8 @@ DDEx manages the intersection between multiple APIs (such as [Apache POI](http:/
 
 DDEx is being used by other projects and is associated with academic productions, such as:
 
-* [Project BioSpread - Integrating data from Web spreadsheets](purl.org/biospread/)
-* [2graph API](github.com/matheusmota/ddex)
-* [Paper: _"Automatic Interpretation of Biodiversity Spreadsheets Based on the Recognition of Construction Patterns"_](http://dx.doi.org/10.5220/0004898200570068)
+* [Project BioSpread - Integrating data from Web spreadsheets](http://purl.org/biospread/)
+* [2graph - An API for abstracting graph databases](http://github.com/matheusmota/ddex)
+* Paper: [_"Automatic Interpretation of Biodiversity Spreadsheets Based on the Recognition of Construction Patterns"_](http://dx.doi.org/10.5220/0004898200570068)
+* Paper: [_"Extracting and Semantically Integrating Implicit Schemas from Multiple Spreadsheets"_](http://seer.lcc.ufmg.br/index.php/jidm/article/view/220)
+* Paper: [_"Introducing shadows: Flexible document representation and annotation on the Web"_](http://dx.doi.org/10.1109/ICDEW.2013.6547416)
