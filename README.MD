@@ -1,26 +1,23 @@
-DDEx - Document Data Extractor
-==============
-
-Extracting data independently of file formats
+# DDEx Project - Document Data Extractor
 ---------
 
-Welcome to the DDEx's project page. Here you'll find more information about the API.
-What is DDEx?
+## Extracting data independently of file formats
 
 DDEx - Document Data Extractor - is a framework that allows other applications to transparently open and extract the content of documents, regardless of formats.
 
 We are working to provide support for:
 
-    OLE2 file formats
-        ".doc", ".xls" and ".ppt"
+    * OLE2 file formats
+      ** ".doc", ".xls" and ".ppt"
     OOXML file formats
         ".docx", ".xlsx" and ".pptx"
     ODF file formats
         ".odt", ".ods" and ".odp"
     PDF
 
-DDEx is based on the Builder Design Pattern (http://en.wikipedia.org/wiki/Builder_pattern), so it can be easily extended to support other formats
-Goal, challenges and differentials
+DDEx is based on the [Builder Design Pattern](http://en.wikipedia.org/wiki/Builder_pattern), so it can be easily extended to support other formats
+
+## Goal, challenges and differentials
 
 DDEx aims to decouple the content extraction process from the content processing process. To do that, DDEx needs to able to handle the document format diversity, proving access to document content independently of file formats.
 
