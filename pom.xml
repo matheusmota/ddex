@@ -4,7 +4,7 @@
   <groupId>br.unicamp.ic.lis.ddex</groupId>
   <artifactId>ddex</artifactId>
   <packaging>jar</packaging>
-  <version>3.0.1</version>
+  <version>3.0.2</version>
   <name>ddex</name>
   <url>http://github.com/matheusmota/ddex</url>
   <dependencies>
