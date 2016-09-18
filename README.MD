@@ -26,7 +26,7 @@ DDEx manages the intersection between multiple APIs (such as [Apache POI](http:/
 
 ## Who is using DDEx?
 
-DDEx is being used by other projects and is associated with academic productions, such as:
+DDEx was born on the academia and ended up being used by other Ph.D. and MSc students during their research. DDEx is also being used by other projects and is associated with academic productions, such as:
 
 * [Project BioSpread - Integrating data from Web spreadsheets](http://purl.org/biospread/)
 * [2graph - An API for abstracting graph databases](http://github.com/matheusmota/ddex)
